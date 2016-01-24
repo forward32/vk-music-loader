@@ -2,20 +2,6 @@ import sys, os
 from urllib.request import urlretrieve
 
 
-"""
-Usage:
-    python3 simple_loader.py <filename> <dirname>
-
-Description:
-    This script takes information about all tracks inside file 'filename'
-    and downloads them into folder 'dirname'.
-    It skips track if it already exists in folder 'dirname'.
-
-    File 'filename' contains information about music in next format:
-        track name###track url
-"""
-
-
 def my_print(text):
     sys.stdout.write(text)
     sys.stdout.flush()
@@ -74,7 +60,7 @@ def load_all_tracks(tracks_filename, dirname):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        my_print("usage: python3 simple_loader.py <filename> <directory>\n")
+        my_print("usage: python3 saver.py <file> <folder>\n")
         sys.exit(-1)
 
     tracks_filename = sys.argv[1]

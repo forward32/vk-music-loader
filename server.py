@@ -26,8 +26,8 @@ def auth_callback():
 
     user_id = str(ret["user_id"])
     token = ret["access_token"]
-    # id:(token, offset)
-    user_info_storage[user_id] = (token, 0)
+    # id:token
+    user_info_storage[user_id] = token
 
     redirect_to_tracks = redirect("/tracks")
     response = app.make_response(redirect_to_tracks)
@@ -42,21 +42,18 @@ def tracks():
         url = make_auth_url()
         return redirect(url)
     
-    token = user_info_storage[user_id][0]
-    offset = user_info_storage[user_id][1]
-    if "prev" in request.args and offset > 0:
-        offset -= TRACKS_PER_PAGE
-    elif "next" in request.args:
-        offset += TRACKS_PER_PAGE
-
-    user_info_storage[user_id] = (token, offset)
-    url = make_audio_get(user_id, offset, TRACKS_PER_PAGE, token)
+    token = user_info_storage[user_id]
+    url = make_audio_get(user_id, 0, MAX_TRACKS_COUNT, token)
     ret = requests.get(url).json()
     if "error" in ret:
         return ret["error"]
 
     tracks=ret["response"]["items"]
-    return render_template(TRACKS_FORM, tracks=tracks)
+    with open("tracks.lst", "w+") as f:
+        for track in tracks:
+            f.write("{0}###{1}\n".format(track["artist"]+"_"+track["title"], track["url"]))
+
+    return "Info about tracks saved into 'tracks.lst'"
 
 
 if __name__ == "__main__":
